@@ -1,28 +1,38 @@
-<header>
-  <h1>Morse Chat</h1>
+<header class="header">
+  <h1 class="header__logo">Morse Chat</h1>
 </header>
 
-<main>
+<main class="main">
 
   <div class="container">
 
     <div class="wrap">
 
       <div class="chat">
-        <ul class="chat-list">
-          <li class="chat-item" *ngFor="let message of messages">
-            <p class="chat-item__name">{{message.name}}</p>
-            <p class="chat-item__body">{{message.body}}</p>
+        <ul class="chat-list" *ngIf="messages | async; let staticMessages; else noMessage">
+          <li class="chat-item" *ngFor="let message of staticMessages.reverse()">
+            <p class="chat-item__name">{{message.name}}<time>{{message.createdAt | date:'yyyy/MM/dd HH:mm'}}</time></p>
+            <p class="chat-item__body">
+              {{message.body}}({{message.body | morse}})
+            </p>
           </li>
         </ul>
+
+        <ng-template #noMessage>(; _ ;)</ng-template>
       </div>
 
-      <div class="mourse-form">
-        <a href="#" (mousedown)="startMorse()" (mouseup)="endMorse()" class="mourse-btn">maurse</a>
+      <div class="form">
+        <div>
+          <button (mousedown)="startMorse()" (mouseup)="endMorse()" class="morse-btn">maurse</button>
+        </div>
+        <input type="text" placeholder="your name" [(ngModel)]="name" autofocus>
+        <button (click)="sendMessage()">send</button>
+        <button (click)="clearMessage()">clear</button>
+        <div class="preview" *ngIf="morseText">
+          <p>{{morseText | morse}}</p>
+          <p>{{morseText}}</p>
+        </div>
       </div>
-
-      <p>{{morseText | morse}}</p>
-      <p>{{morseText}}</p>
 
     </div>
 
@@ -30,7 +40,7 @@
 
 </main>
 
-<footer>
+<footer class="footer">
   <p>
     <small>&copy; Update.</small>
   </p>

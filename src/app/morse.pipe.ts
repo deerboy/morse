@@ -1,7 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { morseJp } from './morse-jp';
-import * as morse from 'morse';
 
 @Pipe({
   name: 'morse'
