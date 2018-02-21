@@ -18,7 +18,7 @@
 *.sublime-workspace
 
 # Access Key
-environments/*
+environments
 
 # IDE - VSCode
 .vscode/*
