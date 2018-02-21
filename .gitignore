@@ -17,6 +17,9 @@
 .settings/
 *.sublime-workspace
 
+# Access Key
+environments/*
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
