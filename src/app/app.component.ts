@@ -3,8 +3,9 @@ import { Component, HostListener } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
 
+import { ConsoleMsgService } from 'ng-console-msg';
+
 export interface Message {
-  name: string;
   body: string;
   createdAt: Date;
 }
@@ -17,7 +18,6 @@ export interface Message {
 export class AppComponent {
   title = 'app';
   morseText = '';
-  name: string;
   messages: Observable<any[]>;
 
   private keyDownFlg = false;
@@ -26,8 +26,17 @@ export class AppComponent {
   private hitStartTime: number;
   private blankStartTime: number;
   private messageCollection: AngularFirestoreCollection<Message>;
+  private sound = new Audio('./assets/sound.mp3');
 
-  constructor(private db: AngularFirestore) {
+  constructor(
+    private db: AngularFirestore,
+    private consoleMsgService: ConsoleMsgService
+  ) {
+
+    this.consoleMsgService.print({
+      body: 'Updateで実務スキルを身につけませんか？',
+      link: 'https://update.jp'
+    });
 
     this.messageCollection = db.collection<Message>('messages', ref => ref.orderBy('createdAt'));
     this.messages = this.messageCollection.valueChanges();
@@ -44,28 +53,31 @@ export class AppComponent {
         this.startMorse();
         this.keyDownFlg = true;
       }
+      event.preventDefault();
     }
   }
 
   @HostListener('window:keyup', ['$event'])
   keyUpEvent(event: KeyboardEvent) {
-    if (event.keyCode === 32) {
-      this.endMorse();
-      this.keyDownFlg = false;
-    }
-  }
-
-  @HostListener('window:keypress', ['$event'])
-  keyPressEvent(event: KeyboardEvent) {
-    if (event.keyCode === 13) {
-      this.sendMessage();
+    switch (event.keyCode) {
+      case 13:
+        this.sendMessage();
+        break;
+      case 32:
+        this.endMorse();
+        this.keyDownFlg = false;
+        break;
+      case 27:
+        this.clearMessage();
+        break;
     }
   }
 
   startMorse() {
     const blankCount = this.timer -  this.blankStartTime;
+    this.sound.play();
 
-    if (blankCount > 5) {
+    if (blankCount > 3) {
       this.morseText += ' ';
     }
 
@@ -74,8 +86,9 @@ export class AppComponent {
 
   endMorse() {
     const hitCount = this.timer -  this.hitStartTime;
+    this.sound.pause();
 
-    if (hitCount > 2) {
+    if (hitCount > 1) {
       this.morseText += '-';
     } else {
       this.morseText += '.';
@@ -85,11 +98,12 @@ export class AppComponent {
   }
 
   sendMessage() {
-    this.messageCollection.add({
-      name: this.name || 'no name',
-      body: this.morseText,
-      createdAt: new Date()
-    });
+    if (this.morseText) {
+      this.messageCollection.add({
+        body: this.morseText,
+        createdAt: new Date()
+      });
+    }
 
     this.morseText = '';
   }

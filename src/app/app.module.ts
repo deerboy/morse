@@ -9,6 +9,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AppComponent } from './app.component';
 import { MorsePipe } from './morse.pipe';
 
+import { ConsoleMsgService } from 'ng-console-msg';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,7 @@ import { MorsePipe } from './morse.pipe';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule
   ],
-  providers: [],
+  providers: [ConsoleMsgService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
