@@ -38,6 +38,8 @@ export class AppComponent {
       link: 'https://update.jp'
     });
 
+    this.sound.volume = 0.05;
+
     this.messageCollection = db.collection<Message>('messages', ref => ref.orderBy('createdAt'));
     this.messages = this.messageCollection.valueChanges();
 
